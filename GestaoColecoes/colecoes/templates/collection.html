@@ -1,0 +1,14 @@
+<h1>MVC - Collection List</h1>
+{% if collection_list %}
+	<ul>
+	{% for collection in collection_list %}
+		{% if collection != "FIFA 2016"%}
+			<li>{{ collection }}</li>
+		{%else%}
+			<li style="color:red">{{ collection }}</li>
+		{%endif%}
+	{% endfor %}
+	</ul>
+{% else %}
+	<p>No Collections Available.</p>
+{% endif %}
