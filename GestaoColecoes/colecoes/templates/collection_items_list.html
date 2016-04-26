@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Gestão de Coleções</title>
+	</head>
+	<body>
+		<h1>Gestão de Coleções</h1>
+		<h2>Lista de Itens da Coleção {{ collection_items.0 }}</h2>
+		{% if collection_items_list %}
+			<table>
+			{% for collection_item in collection_items_list %}
+			<tr>
+				<td><a href = {{ page.url }}"/colecoes/{{ collection_items.0 }}/items/{{ collection_items.1 }}" style = "font-weight: bolder; display: inline">
+				{{ collection_items.2 }} - {{ collection_items.3 }}</a></td> 
+				<td>{{ collection_items.4 }}</td>
+			</tr>
+			{% endfor %}
+			</table>
+		{% endif %}
+		<p><a href = "new">Criar novo item nesta coleção</a></p>
+	</body>
+</html>

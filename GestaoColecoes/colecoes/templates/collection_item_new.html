@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Gestão de Coleções</title>
+	</head>
+	<body>
+		<h1>Gestão de coleções</h1>
+		<h2>Novo Item</h2>
+		<form id="category_form" method="post" action="/colecoes/item/new/">
+		{# nao funciona - falta o id da colecao!!! #}
+			{% csrf_token %}
+			{% for hidden in form.hidden_fields %}
+				<p>{{ hidden }}</p>
+			{% endfor %}
+			{% for field in form.visible_fields %}
+				<p>{{ field.label_tag }} {{ field }}</p>
+				<div style="color:red; font-size: 0.75em">{{ field.errors }}</div> 
+			{% endfor %}
+			<input type="submit" name="submit" value="Criar Item" />
+		</form>
+
+	</body>
+</html>

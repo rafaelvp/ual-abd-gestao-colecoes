@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Gestão de Coleções</title>
+	</head>
+	<body>
+		<h1>Gestão de Coleções</h1>
+		<h2>Lista de Coleções</h2>
+		{% if collections_list %}
+			<table>
+			{% for collection in collections_list %}
+			<tr>
+				<td><a href = {{ page.url }}"/colecoes/{{ collection.0 }}" style = "font-weight: bolder; display: inline">
+				{{ collection.1 }}</a></td> 
+				{# ToDo: verificar se a colecao está ativa e mudar a cor do link #}
+				<td>Coleção de {{ collection.3 }}</td>
+			</tr>
+				{# ToDo: caso o user esteja logged in, mostrar link para as suas coleções #}
+			{% endfor %}
+			</table>
+			<p>
+			<a href = "new">Criar nova coleção</a>
+			
+		{% else %}
+			<p>Nao existem coleções disponiveis.</p>
+		{% endif %}
+	</body>
+</html>
