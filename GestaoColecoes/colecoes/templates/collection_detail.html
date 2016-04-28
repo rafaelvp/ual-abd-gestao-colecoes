@@ -10,9 +10,10 @@
 		<p>Descrição: {{ collections_detail.2 }}</p>
 		<p>Tipo: {{ collections_detail.3 }} </p> {# ToDo : colocar aqui link para o detalhe do tipo de coleção #}
 		
-		<h3><a href="/colecoes/{{ collections_detail.0 }}/update">Alterar coleção</a></h3>
-		<h3><a href="/colecoes/{{ collections_detail.0 }}/delete">Apagar coleção</a></h3>
+		<h3><a href="/colecoes/{{ collections_detail.0 }}/update/">Alterar coleção</a></h3>
+		<h3><a href="/colecoes/{{ collections_detail.0 }}/delete/">Apagar coleção</a></h3>
+		<h3><a href="/colecoes/{{ collections_detail.0 }}/item/">Ver itens desta coleção</a></h3>
+		<h3><a href={{ page.url }}"/colecoes">Voltar à lista</a></h3>
 		
-		<h3>Go <a href={{ page.url }}"/colecoes">Voltar à lista</a></h3>
 	</body>
 </html>

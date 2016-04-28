@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+'''
+Created on 25/03/2016
+
+@author: Rafael Victória-Pereira, 19960201
+@author: João Machado, 20140014
+'''
+
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User

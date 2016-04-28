@@ -19,8 +19,8 @@
 				{# ToDo: caso o user esteja logged in, mostrar link para as suas coleções #}
 			{% endfor %}
 			</table>
-			<p>
-			<a href = "new">Criar nova coleção</a>
+			{# ToDo: só mostrar se o user tiver acesso #}
+			<p><a href = "new">Criar nova coleção</a></p>
 			
 		{% else %}
 			<p>Nao existem coleções disponiveis.</p>

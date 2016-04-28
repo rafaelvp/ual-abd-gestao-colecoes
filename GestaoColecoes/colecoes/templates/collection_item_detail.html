@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Gestão de Coleções</title>
+	</head>
+	<body>
+		<h1>Gestão de coleções</h1>
+		<h2>Gestão de items da coleção {{ collection_items_detail.2 }}</h2>
+		<br>
+		{% if collection_items_detail.3 %}
+		<p>Série: {{ collection_items_detail.3 }}</p>
+		{% endif %}
+		<p>Número: {{ collection_items_detail.4 }}</p>
+		<p>Descrição: {{ collection_items_detail.5 }}</p>
+		
+		<h3><a href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/update">Alterar item</a></h3>
+		<h3><a href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete">Apagar item</a></h3>
+		<h3><a href={{ page.url }}"/colecoes/{{ collection_items_detail.1 }}/item/">Voltar à lista</a></h3>
+		
+	</body>
+</html>

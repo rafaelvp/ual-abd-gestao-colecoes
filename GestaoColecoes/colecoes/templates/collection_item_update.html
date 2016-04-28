@@ -5,20 +5,18 @@
 		<title>Gestão de Coleções</title>
 	</head>
 	<body>
-		<h1>Gestão de coleções</h1>
-		<h2>Novo Item</h2>
-		<form id="category_form" method="post" action="/colecoes/{{ c_id }}/item/new/">
-		{# nao funciona - falta o id da colecao!!! #}
+		<h1>Gestão de itens de uma coleção</h1>
+		<h2>Alterar Item {{ i_id }}</h2>
+		<form id="category_form" method="post" action="/colecoes/{{ c_id }}/item/{{ i_id }}/update/">
 			{% csrf_token %}
 			{% for hidden in form.hidden_fields %}
 				<p>{{ hidden }}</p>
 			{% endfor %}
 			{% for field in form.visible_fields %}
 				<p>{{ field.label_tag }} {{ field }}</p>
-				<div style="color:red; font-size: 0.75em">{{ field.errors }}</div> 
+				<div style="color:red; font-size: 0.75em">{{ field.errors }}</div>
 			{% endfor %}
-			<input type="submit" name="submit" value="Criar Item" />
+			<input type="submit" name="submit" value="Alterar Item" />
 		</form>
-
 	</body>
 </html>
