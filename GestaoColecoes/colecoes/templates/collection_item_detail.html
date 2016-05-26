@@ -1,22 +1,24 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Gestão de Coleções</title>
-	</head>
-	<body>
-		<h1>Gestão de coleções</h1>
-		<h2>Gestão de items da coleção {{ collection_items_detail.2 }}</h2>
-		<br>
-		{% if collection_items_detail.3 %}
-		<p>Série: {{ collection_items_detail.3 }}</p>
-		{% endif %}
-		<p>Número: {{ collection_items_detail.4 }}</p>
-		<p>Descrição: {{ collection_items_detail.5 }}</p>
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load app_filters %}
+
+{% block title %}Detalhe do Item Nº <code>{{ collection_items_detail.1 }}</code>{% endblock %}
+{% block subtitle %}Consulta dos detalhes do item {{ collection_items_detail.5 }} da coleção {{ collection_items_detail.2 }}{% endblock %}
+
+
+{% block main_body %}
+<div class="form-group form-vertical">
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Série/Número</span><span>{{ collection_items_detail.4 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Descrição</span><span>{{ collection_items_detail.5 }}</span></p>
+	    <div class="form-group tri_button_zone">
+    		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
+	  		{% if request.user|has_group:"site_admins" %}
+			    <a class="btn btn-warning" href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/update">Alterar item</a>	    
+			    <a class="btn btn-danger" href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete">Apagar item</a>
+			    <a style="padding-right: 40px"></a>
+		    {% endif %}
+			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/{{ collection_items_detail.1 }}/item/">Voltar à lista de itens</a>
+		</div>		
 		
-		<h3><a href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/update">Alterar item</a></h3>
-		<h3><a href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete">Apagar item</a></h3>
-		<h3><a href={{ page.url }}"/colecoes/{{ collection_items_detail.1 }}/item/">Voltar à lista</a></h3>
-		
-	</body>
-</html>
+{% endblock %}

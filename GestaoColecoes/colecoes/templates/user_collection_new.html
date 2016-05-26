@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Nova Coleção{% endblock %}
+{% block subtitle %}Adiciona uma nova coleção à tua lista de coleções{% endblock %}
+
+
+{% block main_body %}
+		<h2>Nova Coleção</h2>
+		
+	    <form id="category_form" method="post" action="/colecoes/user_col/new/">
+        <div class="form-group form-horizontal">
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+            <p>{{ hidden }}</p>
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                <label class="control-label col-sm-2">{{ field.label }}</label>
+                <div class="controls">
+                    {{ field }}
+                    <div style="color:red; font-size: 0.75em">{{ field.errors }}</div>
+                    <p class="help-text">{{ field.help_text }} </p>
+                </div>
+            {% endfor %}
+        </div>   
+        
+        <div class="form-group tri_button_zone"> 
+            <input class="btn btn-success" type="submit" name="submit" value="Adicionar Coleção" />
+            <a style="padding-right: 40px"></a>
+            <a class="btn btn-primary" href="/colecoes/user_col/">Voltar</a>
+        </div>
+    </form>
+{% endblock %}

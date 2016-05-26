@@ -31,7 +31,13 @@ class Collection(models.Model):
     
 class Collection_Item(models.Model):
     def __str__(self):
-        return self.item_series + str(self.item_number)
+        return self.description
+    
+    def get_item_series_number(self):
+        if self.item_series:
+            return (self.item_series + "/" + str(self.item_number))
+        else:
+            return str(self.item_number)
     
     id = models.AutoField(primary_key = True)
     collection = models.ForeignKey(Collection, default=0, verbose_name = "the related collection")
@@ -40,16 +46,24 @@ class Collection_Item(models.Model):
     description = models.CharField(max_length=50)
     
 class User_Collection(models.Model):
-    def __str__(self):
-        return self.collection.name
     
     id = models.AutoField(primary_key = True)
     user = models.ForeignKey(User, default=0, verbose_name = "the related collection owner")
     collection = models.ForeignKey(Collection, default=0, verbose_name = "the related collection")
     
+    def get_collection_name(self):
+        return self.collection.name
+    
 class User_Collection_Item(models.Model):
-    def __str__(self):
-        return self.user_collection + '-' + self.collection_item
+    
+    def get_item_series_number(self):
+        if self.collection_item.item_series:
+            return (self.collection_item.item_series + "/" + str(self.collection_item.item_number))
+        else:
+            return str(self.collection_item.item_number)
+        
+    def get_item_description(self):
+        return self.collection_item.description
     
     id = models.AutoField(primary_key = True)
     user_collection = models.ForeignKey(User_Collection, default=0, verbose_name = "the related user collection")

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Detalhe do Item Nº <code>{{ collection_items_detail.1 }}</code>{% endblock %}
+{% block subtitle %}Consulta dos detalhes do item {{ collection_items_detail.4 }} da tua coleção {{ collection_items_detail.2 }}{% endblock %}
+
+
+{% block main_body %}
+<div class="form-group form-vertical">
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Série/Número</span><span>{{ collection_items_detail.3 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Descrição</span><span>{{ collection_items_detail.4 }}</span></p>
+	    <div class="form-group tri_button_zone">
+			    <a class="btn btn-danger" href="/colecoes/user_col/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete">Apagar item</a>
+			    <a style="padding-right: 40px"></a>
+			    <a class="btn btn-primary" href="/colecoes/user_col/{{ collection_items_detail.1 }}/item/">Voltar à lista de items</a>
+		</div>		
+		
+{% endblock %}

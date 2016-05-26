@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Alterar Tipo de Coleção Nº <code>{{id}}</code>{% endblock %}
+{% block subtitle %}Alterar os detalhes do tipo de coleção escolhido{% endblock %}
+
+
+{% block main_body %}
+
+    <form id="category_form" method="post" action="/colecoes/tipos/{{id}}/update/">
+        <div class="form-group form-horizontal">
+
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+            <p>{{ hidden }}</p>
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                <label class="control-label col-sm-2">{{ field.label }}</label>
+                <div class="controls">
+                    {{ field }}
+                    <div style="color:red; font-size: 0.75em">{{ field.errors }}</div>
+                    <p class="help-text">{{ field.help_text }}</p>
+                </div>
+
+            {% endfor %}
+            
+        </div>   
+       <div class="form-group tri_button_zone"> 
+            <input class="btn btn-warning" type="submit" name="submit" value="Alterar Tipo de Coleção" />
+            <a style="padding-right: 40px"></a>
+            <a class="btn btn-primary" href={{ page.url }}"/colecoes/tipos/{{id}}">Voltar</a>
+        </div>
+    </form>
+{% endblock %}

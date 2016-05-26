@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Lista de Itens da Coleção {{ c_name }}{% endblock %}
+{% block subtitle %}Aqui podes adicionar e remover os itens que tens desta coleção{% endblock %}
+
+
+{% block main_body %}
+		{% if collection_items_list %}
+			<div class="col-md-9">
+<table class="table table-striped table-hover">
+  <thead>
+        <tr>
+          <th>Série/Número</th>
+          <th>Descrição</th>
+        </tr>
+  </thead>
+  <tbody>
+			{% for collection_item in collection_items_list %}
+			<tr>
+				<th scope="row" ><a href = {{ page.url }}"/colecoes/user_col/{{ c_id }}/item/{{ collection_item.0 }}/" style = "font-weight: bolder; display: inline">
+				{{ collection_item.1 }}</a></th>
+				<td>{{ collection_item.2 }}</td>
+			</tr>
+			{% endfor %}
+	</tbody>
+</table>
+			
+		{% else %}
+			<p>Ainda não tens um único item desta coleção?! Adiciona um agora!</p>
+		{% endif %}
+		
+			<div class="form-group tri_button_zone">
+			  <a class="btn btn-warning" href={{ page.url }}"/colecoes/user_col/{{ c_id }}/item/new">Adicionar item a esta coleção</a>      
+			  <a style="padding-right: 40px"></a>
+			  <a class="btn btn-primary" href={{ page.url }}"/colecoes/user_col/">Voltar à lista das tuas coleções</a>
+			</div>
+
+		
+{% endblock %}
+
+</div>
+		

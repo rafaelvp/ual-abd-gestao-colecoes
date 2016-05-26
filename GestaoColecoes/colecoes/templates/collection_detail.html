@@ -1,19 +1,26 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Gestão de Coleções</title>
-	</head>
-	<body>
-		<h1>Gestão de coleções</h1>
-		<h2>{{ collections_detail.1 }} - Uma coleção de {{ collections_detail.3 }}</h2>
-		<p>Descrição: {{ collections_detail.2 }}</p>
-		<p>Tipo: {{ collections_detail.3 }} </p> {# ToDo : colocar aqui link para o detalhe do tipo de coleção #}
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load app_filters %}
+
+{% block title %}Detalhe da Coleção Nº <code>{{ collections_detail.0 }}</code>{% endblock %}
+{% block subtitle %}Consulta dos detalhes da coleção {{ collections_detail.1 }} {% endblock %}
+
+
+{% block main_body %}
+<div class="form-group form-vertical">
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Nome</span><span>{{ collections_detail.1 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Tipo</span><span>{{ collections_detail.2 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Descrição</span><span>{{ collections_detail.3 }}</span></p>
+	    <div class="form-group tri_button_zone">
+    		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
+	  		{% if request.user|has_group:"site_admins" %}
+			    <a class="btn btn-warning" href="/colecoes/{{ collections_detail.0 }}/update">Alterar coleção</a>	    
+			    <a class="btn btn-danger" href="/colecoes/{{ collections_detail.0 }}/delete">Apagar coleção</a>
+		    {% endif %}
+   			    <a class="btn btn-info" href="/colecoes/{{ collections_detail.0 }}/item/">Ver itens desta coleção</a>
+			    <a style="padding-right: 40px"></a>
+			    <a class="btn btn-primary" href={{ page.url }}"/colecoes">Voltar à página inicial</a>
+		</div>		
 		
-		<h3><a href="/colecoes/{{ collections_detail.0 }}/update/">Alterar coleção</a></h3>
-		<h3><a href="/colecoes/{{ collections_detail.0 }}/delete/">Apagar coleção</a></h3>
-		<h3><a href="/colecoes/{{ collections_detail.0 }}/item/">Ver itens desta coleção</a></h3>
-		<h3><a href={{ page.url }}"/colecoes">Voltar à lista</a></h3>
-		
-	</body>
-</html>
+{% endblock %}

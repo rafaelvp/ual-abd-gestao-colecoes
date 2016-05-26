@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load app_filters %}
+
+{% block title %}Detalhe do Tipo de Coleção Nº <code>{{ collection_types_detail.0 }}</code>{% endblock %}
+{% block subtitle %}Consulta dos detalhes do tipo de coleção {{ collection_types_detail.1 }} {% endblock %}
+
+
+{% block main_body %}
+<div class="form-group form-vertical">
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Nome</span><span>{{ collection_types_detail.1 }}</span></p>
+	    <div class="form-group tri_button_zone">
+    		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
+	  		{% if request.user|has_group:"site_admins" %}
+			    <a class="btn btn-warning" href="/colecoes/tipos/{{ collection_types_detail.0 }}/update">Alterar tipo de coleção</a>	    
+			    <a class="btn btn-danger" href="/colecoes/tipos/{{ collection_types_detail.0 }}/delete">Apagar tipo de coleção</a>
+			    <a style="padding-right: 40px"></a>
+		    {% endif %}
+			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/tipos/">Voltar à lista</a>
+		</div>		
+		
+{% endblock %}

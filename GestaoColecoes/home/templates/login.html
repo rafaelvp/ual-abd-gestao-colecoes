@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Entrar{% endblock %}
+{% block subtitle %}Lembras-te da Password?{% endblock %}
+
+{% block main_body %}
+        {% if registered %}
+        <strong>Já está Logged in.</strong>
+        <div class="form-group tri_button_zone"> 
+            <a class="btn btn-primary" href={{ page.url }}"/">Voltar à página inicial</a>
+        </div>
+        {% else %}
+        
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4" style="  padding-left: 90px; padding-top: 40px; background-color: #EEE;">
+            <form id="login_form" method="post" action="/login/">
+                {% csrf_token %}
+                <p>Nome de Utilizador:<br>
+                <input type="text" name="username" value="" size="25" /></p>
+                <p>Password:
+                <input type="password" name="password" value="" size="25" /></p>
+	            <div style="padding-top: 40px; padding-bottom: 40px" class="form-group "> 
+	                <input class="btn btn-success" type="submit" name="submit" value="Entrar" />
+	                <a style="padding-right: 40px"></a>
+	                <a class="btn btn-primary" href={{ page.url }}"/">Cancelar</a>
+	            </div>
+            </form>
+        </div>
+        <div class="row">
+            <div style="padding-top: 40px;" class="col-md-12"></div>
+        </div>    
+        {% endif %}
+{% endblock %}        

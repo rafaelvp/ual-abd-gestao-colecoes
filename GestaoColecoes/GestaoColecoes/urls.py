@@ -16,9 +16,16 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import RedirectView
+from colecoes import views
+from home import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^colecoes/', include('colecoes.urls', namespace = "colecoes")),
-    url(r'^.*$', RedirectView.as_view(url='/colecoes/')),
+    url(r'^home/', include('home.urls', namespace = "home")),
+    url(r'^.*sign_up/?$', views.sign_up, name='sign_up'),
+    url(r'^.*login/?$', views.logging_in, name='login'),
+    url(r'^.*user_details/?$', views.user_details, name='user_details'),
+    url(r'^.*user_logout/?$', views.user_logout, name='user_logout'),
+    url(r'^.*/?', include('home.urls', namespace="home")),
 ]

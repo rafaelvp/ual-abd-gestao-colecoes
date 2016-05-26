@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Detalhe da Coleção Nº <code>{{ user_collection_detail.0 }}</code>{% endblock %}
+{% block subtitle %}Consulta dos detalhes da tua coleção {{ user_collection_detail.1 }} {% endblock %}
+
+
+{% block main_body %}
+<div class="form-group form-vertical">
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Nome</span><span>{{ user_collection_detail.1 }}</span></p>
+	    <div class="form-group tri_button_zone">
+			    <a class="btn btn-danger" href="/colecoes/user_col/{{ user_collection_detail.0 }}/delete">Apagar coleção da lista</a>
+			    <a class="btn btn-info" href="/colecoes/user_col/{{ user_collection_detail.0 }}/item/">Ver itens desta coleção</a>
+			    <a style="padding-right: 40px"></a>
+			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/user_col/">Voltar à lista de coleções</a>
+		</div>		
+		
+{% endblock %}
