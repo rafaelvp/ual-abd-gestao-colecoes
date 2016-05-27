@@ -77,15 +77,20 @@ WSGI_APPLICATION = 'GestaoColecoes.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+DB_USER = 'gest_col'
+DB_PASSWORD = 'gcpassword'
+DB_IP = 'localhost'
+DB_PORT = '1521'
+
 DATABASES = {
     'default': {
     # Oracle XE database connection
         'ENGINE' : 'django.db.backends.oracle',
         'NAME' : 'XE',
-        'USER' : 'gest_col',
-        'PASSWORD' : 'gcpassword',
-        'HOST' : 'localhost',
-        'PORT' : '1521', 
+        'USER' : DB_USER,
+        'PASSWORD' : DB_PASSWORD,
+        'HOST' : DB_IP,
+        'PORT' : DB_PORT, 
     }
 }
 

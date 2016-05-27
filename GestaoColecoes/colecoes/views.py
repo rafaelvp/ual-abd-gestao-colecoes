@@ -6,19 +6,21 @@ Created on 24/03/2016
 @author: João Machado, 20140014
 '''
 
-from django.contrib.auth.models import Group
+import cx_Oracle
+from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.http.response import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 
+from GestaoColecoes.settings import DB_USER, DB_PASSWORD, DB_IP, DB_PORT
 from colecoes.forms import CollectionTypeForm, CollectionForm, CollectionItemForm, \
                            UserCollectionForm, UserCollectionItemForm
 from colecoes.models import Collection_Type, Collection, Collection_Item, \
                             User_Collection, User_Collection_Item
-from colecoes.templatetags.app_filters import has_group
+from colecoes.templatetags.app_filters import has_group, has_children
 
 
+#from django.conf import settings
 # Collection type views
 def collection_type_new(request):
     ''' creates a new collection type'''
@@ -82,9 +84,15 @@ def collection_type_delete(request, t_id):
     if not (has_group(request.user, "site_admins")):
         raise PermissionDenied
     
-    # ToDo: create delete confirmation screen
-    Collection_Type.objects.filter(id = t_id).delete()
-    return HttpResponseRedirect("/colecoes/tipos/")
+    # Check for children in order to keep the database's referential integrity
+    if has_children(t_id, "Collection_Type"):
+        message1 = "Não é possível apagar este tipo de coleção porque existem coleções que o utilizam."
+        message2 = "Apague essas coleções e tente novamente."
+        context = {'message1': message1, 'message2': message2}
+        return render(request, 'oops.html', context)
+    else:
+        Collection_Type.objects.filter(id = t_id).delete()
+        return HttpResponseRedirect("/colecoes/tipos/")
 
 def collection_type_detail(request, t_id):
     '''lists all the details of a collection type'''
@@ -115,11 +123,17 @@ def collection_delete(request, c_id):
     ''' deletes an existing collection '''
     # if the user is not a site admin, this function is not available
     if not (has_group(request.user, "site_admins")):
-        return HttpResponseRedirect(request.GET.get('from','page_not_available'))
+        raise PermissionDenied
     
-    # ToDo: create delete confirmation screen
-    Collection.objects.filter(id = c_id).delete()
-    return HttpResponseRedirect("/colecoes/")
+    # Check for children in order to keep the database's referential integrity
+    if has_children(c_id, "Collection"):
+        message1 = "Não é possível apagar esta coleção porque existem itens ou coleções de utilizador associados."
+        message2 = "Apague os itens e/ou coleções de utilizador e tente novamente."
+        context = {'message1': message1, 'message2': message2}
+        return render(request, 'oops.html', context)
+    else:
+        Collection.objects.filter(id = c_id).delete()
+        return HttpResponseRedirect("/colecoes/")
 
 def collection_update(request, c_id):
     ''' updates a collection'''
@@ -266,9 +280,14 @@ def collection_item_delete(request, c_id, i_id):
     if not (has_group(request.user, "site_admins")):
         raise PermissionDenied
     
-    # ToDo: create delete confirmation screen
-    Collection_Item.objects.filter(id = i_id).delete()
-    return HttpResponseRedirect("/colecoes/" + str(c_id) + '/item/' )
+    if has_children(c_id, "Collection_Item"):
+        message1 = "Não é possível apagar este item porque está a ser usado em coleções de utilizador."
+        message2 = "Apague os itens das coleções de utilizador e tente novamente."
+        context = {'message1': message1, 'message2': message2}
+        return render(request, 'oops.html', context)
+    else:
+        Collection_Item.objects.filter(id = i_id).delete()
+        return HttpResponseRedirect("/colecoes/" + str(c_id) + '/item/' )
     
 def collection_item_list(request, c_id):
     ''' lists existing items of a given collection '''
@@ -292,7 +311,7 @@ def user_collection_list(request):
     # Total items of the collection
     user_collections_list = [[user_collection.id, user_collection.collection, \
                               User_Collection_Item.objects.filter(user_collection = user_collection).values('collection_item__id').distinct().count(), \
-                              Collection_Item.objects.filter(collection = user_collection.collection).count(), \
+                              Collection_Item.objects.filter(collection = user_collection.collection).count() \
                               ] \
                                  for user_collection in User_Collection.objects.filter(user=request.user).order_by('collection__name')]
     context = {'user_collections_list' : user_collections_list}
@@ -340,18 +359,30 @@ def user_collection_detail(request, c_id):
 
 def user_collection_delete(request, c_id):
     ''' deletes an existing collection from the user's collection list'''
-    # ToDo: create delete confirmation screen
-    User_Collection.objects.filter(id = c_id).delete()
-    return HttpResponseRedirect("/colecoes/user_col/")
+    # Check for children in order to keep the database's referential integrity
+    if has_children(c_id, "User_Collection"):
+        message1 = "Não é possível apagar esta coleção porque existem itens associados."
+        message2 = "Apague os itens e tente novamente."
+        context = {'message1': message1, 'message2': message2}
+        return render(request, 'oops.html', context)
+    else:
+        User_Collection.objects.filter(id = c_id).delete()
+        return HttpResponseRedirect("/colecoes/user_col/")
 
 def user_collection_item_list(request, c_id):
     ''' lists existing items of a given user collection '''
     #Retrieve the collection name
     user_collection = User_Collection.objects.filter(id=c_id).first()
     c_name = user_collection.get_collection_name()
+    # Find duplicate items in the user collection
+    duplicate_items = find_item_duplicates(c_id)
+    duplicate_items.fetchall()
+    dup_count = duplicate_items.rowcount
+    # Retrieve the collection item details for the list
     collection_items_list = [[item.id, item.get_item_series_number(), item.get_item_description()] \
                              for item in User_Collection_Item.objects.filter(user_collection = c_id).order_by('collection_item__item_series', 'collection_item__item_number')]
-    context = {'collection_items_list' : collection_items_list, 'c_id':c_id, 'c_name':c_name}
+    # Prepare the context
+    context = {'collection_items_list' : collection_items_list, 'c_id':c_id, 'c_name':c_name, 'dup_count':dup_count}
     return render(request, 'user_collection_items_list.html', context)
 
 def user_collection_item_detail(request, c_id, i_id):
@@ -408,25 +439,57 @@ def user_collection_item_new(request, c_id):
         # Render the form with error messages (if any).
         context = {'form': form, 'c_id': c_id}
         return render(request, 'user_collection_item_new.html', context)
+
+def user_collection_item_find_item_exchanges(request, c_id):
+    ''' lists the possible exchanges for the duplicate items of a given user collection '''
+    #Retrieve the collection name
+    user_collection = User_Collection.objects.filter(id=c_id).first()
+    c_name = user_collection.get_collection_name()
+    collection_id = user_collection.collection.id
+    # Find duplicate items in the user collection
+    possible_exchanges_list = find_item_exchanges(c_id, collection_id)
+    rows = possible_exchanges_list.fetchall()
+    # Retrieve the collection item details for the list
+    possible_exchanges_detail_list = []
+    for row in rows:
+        user = User.objects.filter(id = row[0]).first()
+        collection_item = Collection_Item.objects.filter(id = row[2]).first()
+        mailto = "mailto:" + user.email + "?subject=Troca%20de%20itens%20repetidos"
+        possible_exchanges_detail_list.append([mailto, user.username, \
+                                              collection_item.get_item_series_number(), collection_item])
+    # Prepare the context
+    context = {'possible_exchanges_detail_list' : possible_exchanges_detail_list, 'c_id':c_id, 'c_name':c_name}
+    return render(request, 'user_collection_item_find_item_exchanges.html', context)
     
-'''
-# como usar um stored procedure no django - http://www.chrisumbel.com/article/django_python_stored_procedures.aspx
-# criei o sp Procurar_Trocas
-    # static method to perform a fulltext search  
-    @staticmethod  
-    def search(search_string):  
-        # create a cursor  
-        cur = connection.cursor()  
-        # execute the stored procedure passing in   
-        # search_string as a parameter  
-        cur.callproc('searcher_document_search', [search_string,])  
-        # 'searcher_document_search' é o nome do sp
-        # [search_string,] é a lista de parametros
-        # grab the results  
-        # o resultado é colocado na var results com o cur.fetchall()
-        results = cur.fetchall()  
-        cur.close()  
-  
-        # wrap the results up into Document domain objects   
-        return [Document(*row) for row in results]  
-'''
+# Stored Procedure calls
+def find_item_exchanges(user_collection_id, collection_id):  
+    # create a cursor  
+    connection_string = DB_USER + "/" + DB_PASSWORD + "@" + DB_IP + ":" + DB_PORT
+    connection = cx_Oracle.connect(connection_string)
+    cur = connection.cursor()
+    out_cur = cur.var(cx_Oracle.CURSOR)
+    out_query = cur.callproc("FIND_ITEM_EXCHANGES", (user_collection_id, collection_id, out_cur ))
+    # grab the results in iterable form  
+    results = out_query[2]
+    #for row in results:
+    #    print("user id = " + str(row[0]))
+    #    print("user collection id = " + str(row[1]))
+    #    print("collection item id = " + str(row[2])) 
+    cur.close() 
+    return results 
+
+def find_item_duplicates(user_collection_id):  
+    # create a cursor  
+    connection_string = DB_USER + "/" + DB_PASSWORD + "@" + DB_IP + ":" + DB_PORT
+    connection = cx_Oracle.connect(connection_string)
+    cur = connection.cursor()
+    out_cur = cur.var(cx_Oracle.CURSOR)
+    out_query = cur.callproc("FIND_ITEM_DUPLICATES", (user_collection_id, out_cur ))
+    # grab the results in iterable form  
+    results = out_query[1]
+    #for row in results:
+    #    print("user id = " + str(row[0]))
+    #    print("user collection id = " + str(row[1]))
+    #    print("collection item id = " + str(row[2])) 
+    cur.close() 
+    return results

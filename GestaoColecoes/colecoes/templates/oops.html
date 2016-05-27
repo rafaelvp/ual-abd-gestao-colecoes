@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Oops{% endblock %}
+{% block subtitle %}Algo correu mal...{% endblock %}
+
+
+{% block main_body %}
+
+	<div class="container">
+	  	<table>
+	  		<tr>
+	  			<td>
+	  				<img src="{%static 'images/oops.jpg' %}" />
+	  			</td>
+	  			<td><a style="padding-right: 40px"></a></td>
+	  			<td><p>{{ message1 }}</p>
+	  			    <p>{{ message2 }}</p>
+	  			</td>
+	  		</tr>
+	  	</table>
+	</div>
+
+{% endblock %}

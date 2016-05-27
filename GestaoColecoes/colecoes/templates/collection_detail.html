@@ -15,8 +15,11 @@
 	    <div class="form-group tri_button_zone">
     		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
 	  		{% if request.user|has_group:"site_admins" %}
-			    <a class="btn btn-warning" href="/colecoes/{{ collections_detail.0 }}/update">Alterar coleção</a>	    
-			    <a class="btn btn-danger" href="/colecoes/{{ collections_detail.0 }}/delete">Apagar coleção</a>
+			    <a class="btn btn-warning" href="/colecoes/{{ collections_detail.0 }}/update">Alterar coleção</a>
+			    {# Só permite apagar se não existirem nem itens nem coleções de utilizador desta coleção#}
+	  			{% if not collections_detail.0|has_children:"Collection" %}	    
+			    <a class="btn btn-danger" href="/colecoes/{{ collections_detail.0 }}/delete" onclick="return confirm('Tem a certeza que pretende apagar a coleção {{collections_detail.1}}?')">Apagar coleção</a>
+			    {% endif %}
 		    {% endif %}
    			    <a class="btn btn-info" href="/colecoes/{{ collections_detail.0 }}/item/">Ver itens desta coleção</a>
 			    <a style="padding-right: 40px"></a>

@@ -13,8 +13,11 @@
 	    <div class="form-group tri_button_zone">
     		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
 	  		{% if request.user|has_group:"site_admins" %}
-			    <a class="btn btn-warning" href="/colecoes/tipos/{{ collection_types_detail.0 }}/update">Alterar tipo de coleção</a>	    
-			    <a class="btn btn-danger" href="/colecoes/tipos/{{ collection_types_detail.0 }}/delete">Apagar tipo de coleção</a>
+			    <a class="btn btn-warning" href="/colecoes/tipos/{{ collection_types_detail.0 }}/update">Alterar tipo de coleção</a>
+        		{# Só permite apagar se não existirem coleções com este tipo#}
+	  			{% if not collection_types_detail.0|has_children:"Collection_Type" %}	    
+			    	<a class="btn btn-danger" href="/colecoes/tipos/{{ collection_types_detail.0 }}/delete" onclick="return confirm('Tem a certeza que pretende apagar o tipo de coleção {{collection_types_detail.1}}?')">Apagar tipo de coleção</a>
+			    {% endif %}
 			    <a style="padding-right: 40px"></a>
 		    {% endif %}
 			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/tipos/">Voltar à lista</a>

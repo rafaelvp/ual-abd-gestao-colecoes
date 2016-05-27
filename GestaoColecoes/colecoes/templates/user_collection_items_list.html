@@ -32,7 +32,11 @@
 		{% endif %}
 		
 			<div class="form-group tri_button_zone">
-			  <a class="btn btn-warning" href={{ page.url }}"/colecoes/user_col/{{ c_id }}/item/new">Adicionar item a esta coleção</a>      
+			  <a class="btn btn-warning" href={{ page.url }}"/colecoes/user_col/{{ c_id }}/item/new">Adicionar item a esta coleção</a>
+			  {# Só mostrar o links para a procura de trocas se existirem repetidos na coleção#}
+			  {% if dup_count %}      
+			  <a class="btn btn-info" href={{ page.url }}"/colecoes/user_col/{{ c_id }}/item/find_item_exchanges">Procurar trocas</a>
+			  {% endif %}
 			  <a style="padding-right: 40px"></a>
 			  <a class="btn btn-primary" href={{ page.url }}"/colecoes/user_col/">Voltar à lista das tuas coleções</a>
 			</div>

@@ -15,7 +15,7 @@
     		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
 	  		{% if request.user|has_group:"site_admins" %}
 			    <a class="btn btn-warning" href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/update">Alterar item</a>	    
-			    <a class="btn btn-danger" href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete">Apagar item</a>
+			    <a class="btn btn-danger" href="/colecoes/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete"  onclick="return confirm('Tem a certeza que pretende apagar o item {{collection_items_detail.5}}?')">Apagar item</a>
 			    <a style="padding-right: 40px"></a>
 		    {% endif %}
 			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/{{ collection_items_detail.1 }}/item/">Voltar à lista de itens</a>

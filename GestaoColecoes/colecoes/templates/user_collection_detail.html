@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load app_filters %}
 
 {% block title %}Detalhe da Coleção Nº <code>{{ user_collection_detail.0 }}</code>{% endblock %}
 {% block subtitle %}Consulta dos detalhes da tua coleção {{ user_collection_detail.1 }} {% endblock %}
@@ -10,7 +11,10 @@
 <div class="form-group form-vertical">
 	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Nome</span><span>{{ user_collection_detail.1 }}</span></p>
 	    <div class="form-group tri_button_zone">
-			    <a class="btn btn-danger" href="/colecoes/user_col/{{ user_collection_detail.0 }}/delete">Apagar coleção da lista</a>
+	  			{# Só permite apagar se não existirem itens nesta coleção de utilizador#}
+	  			{% if not user_collection_detail.0|has_children:"User_Collection" %}
+			    <a class="btn btn-danger" href="/colecoes/user_col/{{ user_collection_detail.0 }}/delete" onclick="return confirm('Tem a certeza que pretende apagar a sua coleção {{user_collection_detail.1}}?')">Apagar coleção da lista</a>
+			    {% endif %}
 			    <a class="btn btn-info" href="/colecoes/user_col/{{ user_collection_detail.0 }}/item/">Ver itens desta coleção</a>
 			    <a style="padding-right: 40px"></a>
 			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/user_col/">Voltar à lista de coleções</a>

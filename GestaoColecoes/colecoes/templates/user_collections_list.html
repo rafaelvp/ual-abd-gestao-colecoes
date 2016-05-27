@@ -21,7 +21,7 @@
 			{% for user_collection in user_collections_list %}
 			<tr>
 				<th scope="row" ><a href = {{ page.url }}"/colecoes/user_col/{{ user_collection.0 }}" style = "font-weight: bolder; display: inline">{{ user_collection.1 }}</a></th>
-				<td>{{ user_collection.2 }} de {{ user_collection.3 }}</td> 
+				<td>{{ user_collection.2 }} de {{ user_collection.3 }} (coleção {% widthratio user_collection.2 user_collection.3 100 %}% completa)</td> 
 			</tr>
 			{% endfor %}
   </tbody>

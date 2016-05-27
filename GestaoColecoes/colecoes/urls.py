@@ -26,6 +26,7 @@ urlpatterns = [
    # user_collection_item urls
    url(r'user_col/(\d+)/item/(\d+)/$', login_required(views.user_collection_item_detail)),
    url(r'^user_col/(\d+)/item/(\d+)/delete/?$', login_required(views.user_collection_item_delete)),
+   url(r'^user_col/(\d+)/item/find_item_exchanges/?$', login_required(views.user_collection_item_find_item_exchanges)),
    url(r'^user_col/(\d+)/item/new/?$', login_required(views.user_collection_item_new)),
    url(r'^user_col/(\d+)/item/?$', login_required(views.user_collection_item_list)),
    

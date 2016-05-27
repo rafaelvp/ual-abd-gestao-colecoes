@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Lista de Possíveis Trocas{% endblock %}
+{% block subtitle %}Aqui podes encontrar possíveis trocas para os itens que tens repetidos da coleção {{ c_name }}{% endblock %}
+
+
+{% block main_body %}
+		{% if possible_exchanges_detail_list %}
+			<div class="col-md-9">
+<table class="table table-striped table-hover">
+  <thead>
+        <tr>
+          <th>Utilizador</th>
+          <th>Série/Número</th>
+          <th>Descrição</th>
+        </tr>
+  </thead>
+  <tbody>
+			{% for item in possible_exchanges_detail_list %}
+			<tr>
+				<th scope="row" ><a href = {{item.0}} style = "font-weight: bolder; display: inline">
+				{{ item.1 }}</a></th>
+				<td>{{ item.2 }}</td>
+				<td>{{ item.3 }}</td>
+			</tr>
+			{% endfor %}
+	</tbody>
+</table>
+			
+		{% else %}
+			<p>Não foram encontradas possibilidades de troca... Paciência!</p>
+		{% endif %}
+		
+			<div class="form-group tri_button_zone">
+			  <a class="btn btn-primary" href={{ page.url }}"/colecoes/user_col/{{c_id}}/item">Voltar à lista dos teus itens desta coleção</a>
+			</div>
+
+		
+{% endblock %}
+
+</div>
+		

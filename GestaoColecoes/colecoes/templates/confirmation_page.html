@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}{% endblock %}
+{% block subtitle %}{% endblock %}
+
+
+{% block main_body %}
+    <div class="confirmation-box">
+        <p>{{ message }}</p>
+        <div>
+            <a href="{{ prev_link }}">Cancel</a>
+            <form action="{{ action_link }}" method="post">
+                <input type="hidden" name="next" value="{{ prev_link }}" />
+                <input type="submit" value="Send" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -11,7 +11,8 @@
 	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Série/Número</span><span>{{ collection_items_detail.3 }}</span></p>
 	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Descrição</span><span>{{ collection_items_detail.4 }}</span></p>
 	    <div class="form-group tri_button_zone">
-			    <a class="btn btn-danger" href="/colecoes/user_col/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete">Apagar item</a>
+	    		<a class="btn btn-warning" href="/colecoes/user_col/{{ collection_items_detail.1 }}/item/new">Adicionar item a esta coleção</a>
+			    <a class="btn btn-danger" href="/colecoes/user_col/{{ collection_items_detail.1 }}/item/{{ collection_items_detail.0 }}/delete"  onclick="return confirm('Tem a certeza que pretende apagar o item {{collection_items_detail.4}}?')">Apagar item</a>
 			    <a style="padding-right: 40px"></a>
 			    <a class="btn btn-primary" href="/colecoes/user_col/{{ collection_items_detail.1 }}/item/">Voltar à lista de items</a>
 		</div>		
