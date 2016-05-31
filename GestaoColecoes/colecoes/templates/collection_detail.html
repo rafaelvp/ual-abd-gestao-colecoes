@@ -10,8 +10,8 @@
 {% block main_body %}
 <div class="form-group form-vertical">
 	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Nome</span><span>{{ collections_detail.1 }}</span></p>
-	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Tipo</span><span>{{ collections_detail.2 }}</span></p>
-	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Descrição</span><span>{{ collections_detail.3 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Tipo</span><span>{{ collections_detail.3 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Descrição</span><span>{{ collections_detail.2 }}</span></p>
 	    <div class="form-group tri_button_zone">
     		{# Só mostrar os links para gestão de coleções se o user pertencer ao grupo dos administradores#}
 	  		{% if request.user|has_group:"site_admins" %}
