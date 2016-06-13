@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Mensagens{% endblock %}
+{% block subtitle %}{% endblock %}
+
+
+{% block main_body %}
+		<h2>Nova Mensagem</h2>
+		
+	    <form id="category_form" method="post" action="/colecoes/user_msg/exchange_req/{{ receiver }}/{{ user_collection_id }}">
+        <div class="form-group form-horizontal">
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+            <p>{{ hidden }}</p>
+            {% endfor %}
+
+            {% for field in form.visible_fields %}
+                <label class="control-label col-sm-2">{{ field.label }}</label>
+                <div class="controls">
+                    {{ field }}
+                    <div style="color:red; font-size: 0.75em">{{ field.errors }}</div>
+                    <p class="help-text">{{ field.help_text }} </p>
+                </div>
+            {% endfor %}
+        </div>   
+        
+        <div class="form-group tri_button_zone"> 
+            <input class="btn btn-success" type="submit" name="submit" value="Enviar" />
+            <a style="padding-right: 40px"></a>
+            <a class="btn btn-primary" href="/colecoes/user_col/{{user_collection}}/item/find_item_exchanges">Voltar</a>
+        </div>
+    </form>
+{% endblock %}

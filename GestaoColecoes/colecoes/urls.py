@@ -16,6 +16,13 @@ urlpatterns = [
     # Admin
     #url(r'^admin/', include(admin.site.urls)),
     
+   # user message urls
+   url(r'^.*user_msg/exchange_req/(\d+)/(\d+)/?$', login_required(views.user_message_new_exchange_request)),
+   url(r'^.*user_msg/new?$', login_required(views.user_message_new)),
+   url(r'^.*user_msg/(?P<m_id>\d+)/delete/?$', login_required(views.user_message_delete)),
+   url(r'^user_msg/(?P<m_id>\d+)/?$', views.user_message_detail),
+   url(r'^.*user_msg/?$', login_required(views.user_message_list)),
+   
    # collection type urls
    url(r'^tipos/(?P<t_id>\d+)/delete/?$', views.collection_type_delete),
    url(r'^tipos/(?P<t_id>\d+)/update/?$', views.collection_type_update),

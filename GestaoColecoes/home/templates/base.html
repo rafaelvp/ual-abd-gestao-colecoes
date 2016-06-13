@@ -2,6 +2,7 @@
 <!-- [NBB Comment] example from url=(0051)http://getbootstrap.com/examples/starter-template/# -->
 
 {% load staticfiles %}
+{% load app_filters %}
 
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8">
@@ -50,6 +51,13 @@
                 
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="/user_details/">Olá, {{ user.username }}!</a></li>
+                {# Se o user tiver novas mensagens, mostra o icone de novas mensagens#}
+		  		{% if user.id|has_new_messages %}
+		  		<li><a href="/colecoes/user_msg/"><img border=0 width="20px" height="20px"  src="{%static 'images/mail_new.png' %}" data-toggle="tooltip" title="Tem mensagens novas"> </a></li>
+		  		{# caso contrário, mostra o icone "normal" de mensagens#}
+		  		{% else %}
+	  			<li><a href="/colecoes/user_msg/"><img width="20px" height="20px" src="{%static 'images/mail.png' %}" data-toggle="tooltip" title="Não tem mensagens novas"> </a></li>
+		  		{% endif %}
                 <li><a href="/user_logout/">Sair</a></li>
               </ul>                  
             {% else %}
@@ -58,6 +66,7 @@
                 <li><a href="/login/">Entrar</a></li>
               </ul>  
             {% endif %}
+          	
           
 
         </div><!--/.nav-collapse -->

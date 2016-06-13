@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load app_filters %}
+
+{% block title %}Detalhe de Mensagem{% endblock %}
+{% block subtitle %}{% endblock %}
+
+
+{% block main_body %}
+<div class="form-group form-vertical">
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">De</span><span>{{ message_detail.1 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Assunto</span><span>{{ message_detail.2 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Mensagem</span><span>{{ message_detail.3 }}</span></p>
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Data de Envio</span><span>{{ message_detail.4 }}</span></p>
+	    {% if message_detail.5 %}
+	    <p><span class="col-sm-2" style = "font-weight: bolder; text-align:left;">Data de leitura</span><span>{{ message_detail.5 }}</span></p>
+	    {% endif %}
+	    <div class="form-group tri_button_zone">
+		    	<a class="btn btn-danger" href="/colecoes/user_msg/{{ message_detail.0 }}/delete" onclick="return confirm('Tem a certeza que pretende apagar esta mensagem?')">Apagar mensagem</a>
+			    <a style="padding-right: 40px"></a>
+			    <a class="btn btn-primary" href={{ page.url }}"/colecoes/user_msg/">Voltar à lista</a>
+		</div>		
+		
+{% endblock %}

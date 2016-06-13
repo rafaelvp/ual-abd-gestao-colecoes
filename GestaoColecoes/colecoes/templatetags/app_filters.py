@@ -9,7 +9,7 @@ from django import template
 from django.contrib.auth.models import Group 
 
 from colecoes.models import Collection, Collection_Item, User_Collection_Item, \
-    User_Collection
+    User_Collection, User_Message
 
 
 # determinar se o user pertence a um grupo
@@ -56,3 +56,11 @@ def has_children(object_id, object_type):
             return True
         else:
             return False
+        
+@register.filter(name='has_new_messages')
+def has_new_messages(user):
+    unread_message_count = User_Message.objects.filter(receiver = user).filter(message_read = False).count()
+    if unread_message_count != 0:
+        return True
+    else:
+        return False

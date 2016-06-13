@@ -10,7 +10,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.http import request
 
-from colecoes.models import Collection, Collection_Type, Collection_Item, User_Collection, User_Collection_Item
+from colecoes.models import Collection, Collection_Type, Collection_Item, User_Collection, User_Collection_Item, \
+    User_Message
 
 
 class CollectionTypeForm(forms.ModelForm):
@@ -72,3 +73,41 @@ class UserCollectionItemForm(forms.ModelForm):
         model = User_Collection_Item
         fields = ['collection_item']
         exclude = ('user', 'user_collection',)
+        
+class UserMessageForm(forms.ModelForm):
+    
+    # The receiver field queryset here is just a placeholder, because it's overriden in views.py
+    receiver = forms.ModelChoiceField(queryset=User.objects.all(), to_field_name="id", label="Para")
+    subject = forms.CharField(max_length=100, label="Assunto")
+    message = forms.CharField(widget=forms.Textarea, label="Mensagem")
+    
+    # An inline class to provide additional information on the form.
+    class Meta:
+        model = User_Message
+        fields = ['receiver', 'subject', 'message']
+        exclude = ('sender', 'sent_date', 'message_read', 'message_read_date',)
+        
+class UserMessageExchangeForm(forms.ModelForm):
+    # additional code to disable the receiver field
+    def __init__(self, *args, **kwargs):
+        super(UserMessageExchangeForm, self).__init__(*args, **kwargs)
+        self.fields['receiver'].required = False
+        self.fields['receiver'].widget.attrs['disabled'] = 'disabled'
+        self.fields['subject'].widget.attrs['size'] = 49
+        self.fields['message'].widget.attrs['rows'] = 10
+        self.fields['message'].widget.attrs['cols'] = 50
+    
+    # additional code to make sure the appropriate value is placed on field receiver before the form is validated
+    def clean_receiver(self):
+        return self.cleaned_data['receiver']
+        
+    # The receiver field queryset here is just a placeholder, because it's overriden in views.py
+    receiver = forms.ModelChoiceField(queryset=User.objects.all(), to_field_name="id", label="Para")
+    subject = forms.CharField(max_length=100, label="Assunto")
+    message = forms.CharField(widget=forms.Textarea, label="Mensagem")
+    
+    # An inline class to provide additional information on the form.
+    class Meta:
+        model = User_Message
+        fields = ['receiver', 'subject', 'message']
+        exclude = ('sender', 'sent_date', 'message_read', 'message_read_date',)

@@ -6,6 +6,8 @@ Created on 24/03/2016
 @author: João Machado, 20140014
 '''
 
+from datetime import datetime
+
 import cx_Oracle
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -14,10 +16,12 @@ from django.shortcuts import render, get_object_or_404
 
 from GestaoColecoes.settings import DB_USER, DB_PASSWORD, DB_IP, DB_PORT
 from colecoes.forms import CollectionTypeForm, CollectionForm, CollectionItemForm, \
-                           UserCollectionForm, UserCollectionItemForm
+                           UserCollectionForm, UserCollectionItemForm, \
+    UserMessageForm, UserMessageExchangeForm
 from colecoes.models import Collection_Type, Collection, Collection_Item, \
-                            User_Collection, User_Collection_Item
-from colecoes.templatetags.app_filters import has_group, has_children
+                            User_Collection, User_Collection_Item, User_Message
+from colecoes.templatetags.app_filters import has_group, has_children, \
+    has_new_messages
 
 
 #from django.conf import settings
@@ -343,8 +347,8 @@ def user_collection_new(request):
         #override the available collections list, excluding the ones the user already has
         user_collections = User_Collection.objects.filter(user=request.user)
         user_collection_collection_ids = []
-        for collection in user_collections:
-            user_collection_collection_ids.append(collection.collection.id)
+        for user_collection in user_collections:
+            user_collection_collection_ids.append(user_collection.collection.id)
         form.fields['collection'].queryset=Collection.objects.all().exclude(id__in=user_collection_collection_ids).order_by('name')
         # Bad form (or form details), no form supplied...
         # Render the form with error messages (if any).
@@ -454,13 +458,115 @@ def user_collection_item_find_item_exchanges(request, c_id):
     for row in rows:
         user = User.objects.filter(id = row[0]).first()
         collection_item = Collection_Item.objects.filter(id = row[2]).first()
-        mailto = "mailto:" + user.email + "?subject=Troca%20de%20itens%20repetidos"
-        possible_exchanges_detail_list.append([mailto, user.username, \
+        possible_exchanges_detail_list.append([user.id, user.username, \
                                               collection_item.get_item_series_number(), collection_item])
     # Prepare the context
     context = {'possible_exchanges_detail_list' : possible_exchanges_detail_list, 'c_id':c_id, 'c_name':c_name}
     return render(request, 'user_collection_item_find_item_exchanges.html', context)
     
+# User Message views
+def user_message_list(request):
+    ''' lists existing user messages '''
+    # produce an alphabetically list of user messages by read status and sent date
+    print(has_new_messages(request.user))
+    user_messages_list = [[message.id, message.sender, message.sent_date, message.subject, message.message_read]
+                             for message in User_Message.objects.filter(receiver = request.user).order_by('message_read', '-sent_date')]
+    context = {'user_messages_list' : user_messages_list}
+    return render(request, 'user_messages_list.html', context)
+
+def user_message_new(request):
+    ''' creates a new user message'''
+    if request.method == 'POST':
+        form = UserMessageForm(request.POST)
+        try:
+            # Have we been provided with a valid form?
+            if form.is_valid():
+                # Save the new category to the database.
+                saved = form.save(commit=False)
+                # add the missing data for the sender, sent_date and message_read fields, which doesn't come from the form
+                saved.sender = request.user
+                saved.sent_date = datetime.now()
+                saved.message_read = False
+                saved.save()
+                return HttpResponseRedirect("/colecoes/user_msg/")
+            else:
+                # The supplied form contained errors - just print them to the terminal.
+                print form.errors
+                return render(request, 'user_message_new.html', {'form': form})
+        except ValueError:
+            print "Errors validating..."
+    else:
+        # If the request was not a POST, display the form to enter details.
+        form = UserMessageForm()
+        form.fields['receiver'].queryset=User.objects.all().exclude(id=request.user.id).order_by('username')
+        # Bad form (or form details), no form supplied...
+        # Render the form with error messages (if any).
+        return render(request, 'user_message_new.html', {'form': form})
+
+def user_message_new_exchange_request(request, receiver, user_collection_id):
+    ''' creates a new user message'''
+    if request.method == 'POST':
+        form = UserMessageExchangeForm(request.POST)
+        try:
+            # Have we been provided with a valid form?
+            if form.is_valid():
+                # Save the new message to the database.
+                saved = form.save(commit=False)
+                # add the missing data for the sender, sent_date and message_read fields, which doesn't come from the form
+                saved.sender = request.user
+                saved.sent_date = datetime.now()
+                saved.message_read = False
+                user_receiver = User.objects.filter(id = receiver).first()
+                saved.receiver = user_receiver
+
+                saved.save()
+                return HttpResponseRedirect("/colecoes/user_msg/")
+            else:
+                # The supplied form contained errors - just print them to the terminal.
+                print form.errors
+                return render(request, 'user_message_new_exchange.html', {'form': form, 'receiver' : receiver, 'user_collection_id' : user_collection_id})
+        except ValueError:
+            print "Errors validating..."
+    else:
+        # If the request was not a POST, display the form to enter details.
+        # set the selected receiver (passed as parameter) as the default value 
+        # for the form's receiver field
+        user_collection = User_Collection.objects.filter(id = user_collection_id).first()
+        collection = Collection.objects.filter(id=user_collection.collection.id).first()
+        user_receiver = User.objects.filter(id=receiver).first()
+        user_sender = User.objects.filter(id=user_collection.user.id).first()
+        # compose the subject with the collection's type and name
+        subject = u"Troca de %s da coleção '%s'" % (collection.type.name.lower(), user_collection.get_collection_name())
+        # compose the message itself
+        message = u"Olá %s,\n\nTenho %s repetidos da coleção '%s' que talvez não tenhas. \n\nVamos trocar?\n\n Cumprimentos,\n %s" \
+                  % (user_receiver.username.title(), collection.type.name.lower(), user_collection.get_collection_name(), user_sender.username.title())
+        form = UserMessageExchangeForm(initial={'receiver' : receiver, 'subject': subject, 'message' : message})
+        # Bad form (or form details), no form supplied...
+        # Render the form with error messages (if any).
+        return render(request, 'user_message_new_exchange_request.html', {'form': form, 'receiver' : receiver, 'user_collection_id' : user_collection_id})
+
+
+def user_message_detail(request, m_id):
+    '''lists all the details of a selected message'''
+    # if a user is neither the sender or the receiver of a message, it shouldn't access it
+    message = User_Message.objects.filter(id = m_id).first()
+    if ((message.sender != request.user) and (message.receiver != request.user)):
+        raise PermissionDenied
+    
+    # mark message as read, if needed
+    if not message.message_read:
+        message.mark_as_read()
+    message_detail = [message.id, message.sender.username, message.subject, message.message, \
+                       message.sent_date, message.message_read_date]
+    context = {'message_detail': message_detail}
+    return render(request, 'user_message_detail.html', context)
+
+def user_message_delete(request, m_id):
+    ''' deletes an existing message'''
+    User_Message.objects.filter(id = m_id).delete()
+    return HttpResponseRedirect("/colecoes/user_msg/")
+
+
 # Stored Procedure calls
 def find_item_exchanges(user_collection_id, collection_id):  
     # create a cursor  

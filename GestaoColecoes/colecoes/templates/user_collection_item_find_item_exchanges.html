@@ -20,7 +20,7 @@
   <tbody>
 			{% for item in possible_exchanges_detail_list %}
 			<tr>
-				<th scope="row" ><a href = {{item.0}} style = "font-weight: bolder; display: inline">
+				<th scope="row" ><a href = {{ page.url }}"/colecoes/user_msg/exchange_req/{{item.0}}/{{c_id}}" style = "font-weight: bolder; display: inline">
 				{{ item.1 }}</a></th>
 				<td>{{ item.2 }}</td>
 				<td>{{ item.3 }}</td>

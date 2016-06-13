@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from django.db import models
+from datetime import datetime
 
 
 # Create your models here.
@@ -23,6 +24,9 @@ class Collection_Type(models.Model):
 class Collection(models.Model):
     def __str__(self):
         return self.name
+    
+    def get_type(self):
+        return self.type
     
     id = models.AutoField(primary_key = True)
     name = models.CharField(max_length=50)
@@ -68,3 +72,19 @@ class User_Collection_Item(models.Model):
     id = models.AutoField(primary_key = True)
     user_collection = models.ForeignKey(User_Collection, default=0, verbose_name = "the related user collection")
     collection_item = models.ForeignKey(Collection_Item, default=0, verbose_name = "the related collection item")
+    
+class User_Message(models.Model):
+    def mark_as_read(self):
+        self.message_read = True
+        self.message_read_date = datetime.now()
+        self.save()
+    
+    id = models.AutoField(primary_key = True)
+    sender = models.ForeignKey(User, default=0, related_name = "sender", verbose_name = "the message sender")
+    receiver = models.ForeignKey(User, default=0, related_name = "receiver", verbose_name = "the message receiver")
+    sent_date = models.DateTimeField()
+    subject = models.CharField(max_length = 100)
+    message = models.TextField()
+    message_read = models.BooleanField(default=False)
+    message_read_date = models.DateTimeField(null=True)
+    

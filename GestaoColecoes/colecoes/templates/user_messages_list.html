@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+{% load app_filters %}
+
+{% block title %}Mensagens{% endblock %}
+{% block subtitle %}Troque mensagens com outros utilizadores da aplicação!{% endblock %}
+
+
+{% block main_body %}
+
+	{% if user_messages_list %}
+	
+<div class="col-md-9">
+<table class="table table-striped table-hover">
+  <thead>
+        <tr>
+          <th>De</th>
+          <th>Assunto</th>
+          <th>Data</th>
+          <th>Estado</th>
+        </tr>
+  </thead>
+  <tbody>
+			{% for message in user_messages_list %}
+			<tr>
+				<th scope="row" ><a href = {{ page.url }}"/colecoes/user_msg/{{ message.0 }}" style = "font-weight: bolder; display: inline">{{ message.1 }}</a></th>
+				<td>{{ message.3 }}</td>
+				<td>{{ message.2 }}</td>
+				<td>{% if message.4 %}Lida{% else %}Por ler{% endif %}</td> 
+			</tr>
+			{% endfor %}
+  </tbody>
+</table>
+			
+		{% else %}
+			<p>Não tem mensagens.</p>
+		{% endif %}
+		
+	<div class="form-group tri_button_zone">
+	  <a class="btn btn-warning" href="new">Escrever mensagem</a>      
+	  <a style="padding-right: 40px"></a>
+	  <a class="btn btn-primary" href={{ page.url }}"/">Voltar à página inicial</a>
+	</div>
+
+{% endblock %}
+
+</div>
